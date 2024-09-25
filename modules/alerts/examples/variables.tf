@@ -28,13 +28,3 @@ variable "metric_alerts" {
     }))
   }))
 }
-
-
-variable "action_groups" {
-  type = map(object({
-    name                = string
-    resource_group_name = string
-  }))
-  default     = {}
-  description = "The action group name and resource group name."
-}
