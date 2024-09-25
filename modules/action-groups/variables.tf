@@ -8,12 +8,6 @@ variable key_vault_rg_name {
   type = string
 }
 
-variable test {
-description = "test"
-type = string
-}
-
-
 variable "action_groups" {
   type = map(object({
     name                = string
