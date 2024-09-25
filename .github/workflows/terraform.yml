@@ -1,36 +1,121 @@
-# This is a basic workflow to help you get started with Actions
-
-name: CI
-
-# Controls when the workflow will run
+name: "App01-Deployment"
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      action:
+        description: 'Choose action to perform'
+        required: true
+        default: 'apply'
+        type: choice
+        options:
+          - Plan
+          - Plan&Apply
+          - Plan&Destroy
+  # push:
+  #   branches:
+  #     - "main"
+env:
+  TF_VAR_CLIENT: ${{ secrets.ARM_CLIENT_ID }}
+  TF_VAR_SUB_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+  TF_VAR_TENANT: ${{ secrets.ARM_TENANT_ID }}
+  TF_VAR_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  ARM_ACCESS_KEY: ${{ secrets.ARM_ACCESS_KEY }}
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  lint:
+    name: Run TFLint
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+      - name: Log in with Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Setup terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Set up TFLint
+        uses: terraform-linters/setup-tflint@v1
+
+      - name: Initialize TFLint
+        run: tflint --init
+
+      - name: Run TFLint
+        run: tflint
+
+  create-resource:
+    runs-on: ubuntu-latest
+    # needs: lint
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v3
+
+      # - name: Log in with Azure
+      #   uses: azure/login@v1
+      #   with:
+      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Log in with Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: Setup terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6
+
+      - name: Terraform Init
+        run: terraform init
+
+      # - name: Set up TFLint
+      #   uses: terraform-linters/setup-tflint@v1
+
+      # - name: Initialize TFLint
+      #   run: tflint --init
+
+      # - name: Run TFLint
+      #   run: tflint
+
+      # - name: Run TFsec
+      #   uses: aquasecurity/tfsec-action@v1.0.3
+      #   with:
+      #     working-directory: ../modules/
+
+      - name: Terraform plan
+        id: plan
+        if: ${{ github.event.inputs.action == 'plan&apply' || github.event.inputs.action == 'plan' || github.event.inputs.action == 'plan&destroy' }}
+        run: terraform plan -out="main.tfplan" -var-file="deploy.tfvars" -input=false
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          echo "plan successful"
+          exit 1
+
+      - name: App01 Infra Deployment
+        if: ${{ github.event.inputs.action == 'plan&apply' }}
+        run: terraform apply --auto-approve "main.tfplan"
+
+      - name: Terraform Destroy
+        if: ${{ github.event.inputs.action == 'plan&destroy' }}
+        run: terraform destroy -auto-approve -var-file="deploy.tfvars"
