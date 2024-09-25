@@ -1,6 +1,7 @@
 data "azurerm_key_vault" "kv" {
   name                = var.key_vault_name
   resource_group_name = var.key_vault_rg_name
+  xyz = xyz
 }
 
 data "azurerm_key_vault_secret" "pagerduty_integration_key_secret" {
@@ -9,8 +10,6 @@ data "azurerm_key_vault_secret" "pagerduty_integration_key_secret" {
   key_vault_id = data.azurerm_key_vault.kv.id
 }
 
-data 1 {
-}
 
 resource "azurerm_monitor_action_group" "group" {
   for_each = var.action_groups
