@@ -42,7 +42,7 @@ jobs:
       - name: Run TFsec for main directory
         uses: aquasecurity/tfsec-action@v1.0.3
         with:
-          working-directory: .  # Adjust this path if needed
+          working-directory: ./modules/action-groups/examples  # Adjust this path if needed
 
       # Run TFsec for terraform-modules (optional, based on your folder structure)
       - name: Run TFsec for terraform-modules
