@@ -1,13 +1,12 @@
-variable key_vault_name {
+variable "key_vault_name" {
   description = "Name of the vault where you put the PagerDuty key"
-  type = string
+  type        = string
 }
 
-variable key_vault_rg_name {
+variable "key_vault_rg_name" {
   description = "The resource group associated with the vault"
-  type = string
+  type        = string
 }
-
 
 variable "action_groups" {
   type = map(object({
@@ -17,12 +16,12 @@ variable "action_groups" {
     enabled             = optional(bool)
     location            = optional(string)
 
-    webhook_receivers   = optional(list(object({
+    webhook_receivers = optional(list(object({
       name                    = string
       service_uri             = string
       key_vault_secret_id     = optional(string)
       use_common_alert_schema = optional(bool, true)
-      aad_auth                = optional(object({
+      aad_auth = optional(object({
         object_id      = string
         identifier_uri = optional(string)
         tenant_id      = optional(string)
