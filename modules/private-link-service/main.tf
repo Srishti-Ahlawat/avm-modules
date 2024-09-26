@@ -22,15 +22,15 @@ resource "azurerm_private_link_service" "this" {
 
   auto_approval_subscription_ids              = lookup(each.value, "auto_approval_subscription_ids", null)
   visibility_subscription_ids                 = lookup(each.value, "visibility_subscription_ids", null)
-  load_balancer_frontend_ip_configuration_ids = tolist([coalesce(lookup(local.frontend_ip_configurations_map, each.value.frontend_ip_config_name))])
-  enable_proxy_protocol                       = coalesce(each.value.enable_proxy_protocol, false)
+ load_balancer_frontend_ip_configuration_ids = tolist([lookup(local.frontend_ip_configurations_map, each.value.frontend_ip_config_name, null)])
+ enable_proxy_protocol                       = coalesce(each.value.enable_proxy_protocol, false)
   fqdns                                       = lookup(each.value, "fqdns", null)
 
   nat_ip_configuration {
     name                       = "${each.value["name"]}_primary_pls_nat"
     private_ip_address         = lookup(each.value, "private_ip_address", null)
-    private_ip_address_version = coalesce(lookup(each.value, "private_ip_address_version"), "IPv4")
-    subnet_id                  = lookup(data.azurerm_subnet.this, each.key)["id"]
+    private_ip_address_version = coalesce(lookup(each.value, "private_ip_address_version",null), "IPv4")
+    subnet_id                  = lookup(data.azurerm_subnet.this, each.key,null)["id"]
     primary                    = true
   }
 
