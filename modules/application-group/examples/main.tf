@@ -1,4 +1,4 @@
 module "avd-app-group" {
   source     = "../"
-  host_pools = var.host_pools
-  }
+  application_groups = var.application_groups
+}
