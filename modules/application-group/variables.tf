@@ -1,4 +1,4 @@
-variable "host_pools" {
+variable "application_groups" {
   type = map(object({
     virtual_desktop_application_group_resource_group_name          = string
     virtual_desktop_application_group_name                         = string
