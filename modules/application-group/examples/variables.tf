@@ -1,13 +1,4 @@
-terraform {
-  required_version = ">= 1.6, < 2.0"
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = ">= 3.6, <= 3.114.0"
-    }
-    modtm = {
-      source  = "azure/modtm"
-      version = "~> 0.3"variable "application_groups" {
+variable "application_groups" {
   type = map(object({
     virtual_desktop_application_group_resource_group_name          = string
     virtual_desktop_application_group_name                         = string
