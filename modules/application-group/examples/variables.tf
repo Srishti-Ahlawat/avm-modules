@@ -18,16 +18,3 @@ variable "application_groups" {
     virtual_desktop_application_group_timeouts                     = optional(map(string))
   }))
 }
-
-    }
-    random = {
-      source  = "hashicorp/random"
-      version = ">= 3.5.1, < 4.0"
-    }
-  }
-}
-
-provider "azurerm" {
-  features {}
-  skip_provider_registration = true
-}
