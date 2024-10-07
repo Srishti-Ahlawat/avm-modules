@@ -1,4 +1,4 @@
 module "avd-workspace-example" {
-  source = "../"
+  source     = "../"
   workspaces = var.workspaces
 }

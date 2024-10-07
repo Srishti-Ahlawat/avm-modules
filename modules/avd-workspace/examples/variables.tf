@@ -1,12 +1,16 @@
 variable "workspaces" {
   type = map(object({
-    virtual_desktop_workspace_name                          = string
-    virtual_desktop_application_group_resource_group_name   = string
-    virtual_desktop_workspace_location                      = string
-    resource_group_name                                     = string
-    diagnostic_settings                                     = optional(map(any))
-    enable_telemetry                                        = optional(bool)
-    lock                                                    = optional(map(any))
+    virtual_desktop_workspace_name                = string
+    virtual_desktop_workspace_resource_group_name = string
+    virtual_desktop_workspace_location            = string
+    resource_group_name                           = string
+    diagnostic_settings                           = optional(map(any))
+    enable_telemetry                              = optional(bool)
+    lock                                          = optional(map(any))
+    workspaces_appgroup_association = optional(list(object({
+      appgroup_name                = optional(string)
+      appgroup_resource_group_name = optional(string)
+    })))
     private_endpoints                                       = optional(map(any))
     role_assignments                                        = optional(map(any))
     subresource_names                                       = optional(list(string))
