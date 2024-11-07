@@ -13,6 +13,7 @@ variable "enable_zones" {
 variable "avzone" {
   description = "The availability zone to use, for example \"1\", \"2\", \"3\". Ignored if `enable_zones` is false. Use `avzone = null` to disable the use of Availability Zones."
   default     = null
+  type        = string
 }
 
 variable "avzones" {
@@ -45,6 +46,7 @@ variable "resource_group_name" {
 variable "panorama_size" {
   description = "Virtual Machine size."
   default     = "Standard_D5_v2"
+  type        = string
 }
 
 variable "username" {
