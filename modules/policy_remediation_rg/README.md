@@ -25,8 +25,9 @@ module "policy_remediation" {
   source = "../"
 
   policy_assignments = var.policy_assignments
-```
+
 }
+```
 
 ### Outputs
 
@@ -34,9 +35,11 @@ module "policy_remediation" {
 output "resource_policy_remediation_ids" {
   description = "The IDs of the resource policy remediations."
   value = {
-    for k, v in azurerm_management_group_policy_remediation.this : k => v.id
+    for k, v in azurerm_resource_group_policy_remediation.this : k => v.id
   }
 }
+
+
 
 ```
 
@@ -45,22 +48,10 @@ output "resource_policy_remediation_ids" {
 
 | Name                      | Type     | Description                                                                                     | Default |
 |---------------------------|----------|-------------------------------------------------------------------------------------------------|---------|
-| `policy_assignments`      | `map`    | Map of policy assignment configurations, including `name`, `policy_assignment_name`, and `management_group_id`. | `{}`    |
+| `policy_assignments`      | `map`    | Map of policy assignment configurations, including `name`, `policy_assignment_name`, and `resource_group_id`. | `{}`    |
 
 ## Outputs
 
 | Name                  | Description                                    |
 |-----------------------|------------------------------------------------|
 | `remediation_resource_ids` | Map of resource IDs targeted by the remediations. |
-
-## Contributing
-
-Contributions are welcome! Please ensure your code passes linting and includes relevant tests.
-
-## License
-
-This project is licensed under the MIT License.
-
-## Support
-
-For issues, please open a GitHub issue or reach out to the maintainers.
