@@ -763,10 +763,11 @@ variable "monthlyBudget" {
 }
 
 # tflint-ignore: terraform_required_providers
-resource "validation_warning" "costAppOwnerTech" {
-  condition = var.costAppOwnerTech != null
-  summary   = "WARNING: Deprecation Notice, costAppOwnerTech is not loger used, please remove this variable from your configuration"
+resource "validation_warning" "monthlyBudget" {
+  condition = var.monthlyBudget != null
+  summary   = "WARNING: Deprecation Notice, monthlyBudget is not loger used, please remove this variable from your configuration"
 }
+
 
 variable "additionalcontext" {
   description = "used for naming purposes such as 01 or 02"
