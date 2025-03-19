@@ -13,22 +13,23 @@ jobs:
     name: Lint and Security Checks
     runs-on: ubuntu-latest
     steps:
-      
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       - uses: terraform-linters/setup-tflint@v1
         name: Setup TFLint
 
       - name: Initialize TFLint
         shell: bash
-        run:  tflint --init
-
-      - name: Run TFLint
+        run: tflint --init
+      - name: Run TFLint on all modules
         shell: bash
-        run: tflint --chdir="./${{ inputs.work-dir }}" --recursive
-    
- 
-      - name: Run TFsec
+        run: |
+          for dir in $(find ./modules -type d); do
+            tflint --chdir="$dir" --recursive
+          done
+
+      - name: Run TFsec on all modules
         uses: aquasecurity/tfsec-action@v1.0.3
         with:
-          working_directory: "./${{ inputs.work-dir }}"
-      
-  
+          working_directory: ./modules
