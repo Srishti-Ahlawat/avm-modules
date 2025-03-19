@@ -1,0 +1,34 @@
+name: Terraform Prerequisites
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  lint_and_security_checks:
+    name: Lint and Security Checks
+    runs-on: ubuntu-latest
+    steps:
+      
+      - uses: terraform-linters/setup-tflint@v1
+        name: Setup TFLint
+
+      - name: Initialize TFLint
+        shell: bash
+        run:  tflint --init
+
+      - name: Run TFLint
+        shell: bash
+        run: tflint --chdir="./${{ inputs.work-dir }}" --recursive
+    
+ 
+      - name: Run TFsec
+        uses: aquasecurity/tfsec-action@v1.0.3
+        with:
+          working_directory: "./${{ inputs.work-dir }}"
+      
+  
