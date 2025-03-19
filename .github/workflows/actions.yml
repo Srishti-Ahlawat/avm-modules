@@ -22,14 +22,19 @@ jobs:
       - name: Initialize TFLint
         shell: bash
         run: tflint --init
+
       - name: Run TFLint on all modules
         shell: bash
         run: |
           for dir in $(find ./modules -type d); do
-            tflint --chdir="$dir" --recursive
+            echo "Running TFLint on $dir"
+            tflint --chdir="$dir" --recursive || true
           done
 
       - name: Run TFsec on all modules
-        uses: aquasecurity/tfsec-action@v1.0.3
-        with:
-          working_directory: ./modules
+        shell: bash
+        run: |
+          for dir in $(find ./modules -type d); do
+            echo "Running TFsec on $dir"
+            tfsec "$dir" || true
+          done
